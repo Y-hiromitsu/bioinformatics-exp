@@ -158,10 +158,34 @@ for(k=0; k<N; k++)
 //結合部位の探索
 int nt;
 char motif_cp[num];
+double hit[seq_num];
+//配列の初期化
+for(k=0; k<seq_num; k++)
+{
+  hit[k]=0;
+}
 for(nt=0; nt<14; nt++)
 {
  strcpy(g_motif[nt],motif_cp);
- 
+ for(k=0; k<num; k++)
+ {
+  if(motif_cp[k]=='A')
+  {
+    hit[nt]=hit[nt]+s_i[0][k];
+  }
+  if(motif_cp[k]=='C')
+  {
+    hit[nt]=hit[nt]+s_i[0][k];
+  }
+  if(motif_cp[k]=='G')
+  {
+    hit[nt]=hit[nt]+s_i[2][k];
+  }
+  if(motif_cp[k]=='T')
+  {
+    hit[nt]=hit[nt]+s_i[3][k];
+  }
+ }
 }
 
   return 0;
