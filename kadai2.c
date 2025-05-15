@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #define BUFSIZE 1024 //ファイルから読み込む一行の最大文字数
 #define MAX_SEQ_NUM 30 //一つの転写因子に対して与えられる結合部位配列の最大数
 #define MAX_GENE_NUM 8 /*与えられるプロモータ領域の最大遺伝子数*/
+#define N 4
+
 
 char g_motif[MAX_SEQ_NUM][BUFSIZE]; //転写因子の結合部位配列を保存する配列
 
@@ -83,9 +86,9 @@ int main(int argc, char* argv[]){
 int k, l;
 //配列の長さを取得
 int num=strlen(g_motif[0]);
-int freq[4][num];
+int freq[N][num];
 //表の初期化
-for(k=0; k<4; k++)
+for(k=0; k<N; k++)
 {
   for(l=0; l<num; l++)
   {
@@ -117,7 +120,7 @@ for(k=0; k<seq_num; k++)
 }
 //試しに出力
 printf("%d\n",num);
-for(k=0; k<4; k++)
+for(k=0; k<N; k++)
 {
   for(l=0; l<num; l++)
   {
@@ -128,13 +131,52 @@ for(k=0; k<4; k++)
 
 
 //対数オッズスコア行列の作成
-float s_i[4][num];
-for(k=0; k<4; k++)
+double s_i[N][num], p_i[N][num];
+//バックグラウンドにおける頻度の計算
+double bg_total=7519429*2+4637676*2;
+double bg[N]={7519429, 4637676, 4637676, 7519429};
+double q[N]={bg[0]/bg_total, bg[1]/bg_total, bg[2]/bg_total, bg[3]/bg_total};
+double seq_num_pse=seq_num+N;
+for(k=0; k<N; k++)
 {
   for(l=0; l<num; l++)
   {
-    s_i[k][l]=log()
+    p_i[k][l]=(freq[k][l]+1)/(seq_num_pse);
+    s_i[k][l]=log(p_i[k][l]/q[k]);
   }
 }
+//出力
+printf("%lf\n",bg_total);
+printf("%lf\n",seq_num_pse);
+for(k=0; k<N; k++)
+{
+ printf("%5.2lf ",q[k]);
+}
+printf("\n");
+for(k=0; k<N; k++)
+{
+ for(l=0; l<num; l++)
+ {
+  printf("%5.2lf ",p_i[k][l]);
+ }
+ printf("\n");
+}
+for(k=0; k<N; k++)
+{
+  for(l=0; l<num; l++)
+  {
+    printf("%5.2lf ",s_i[k][l]);
+  }
+  printf("\n");
+}
+
+//結合部位の探索
+int nt;
+char 
+for(nt=0; nt<14; nt++)
+{
+
+}
+
   return 0;
 }
