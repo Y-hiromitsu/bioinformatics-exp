@@ -164,7 +164,7 @@ for(k=0; k<seq_num; k++)
 {
   hit[k]=0;
 }
-for(nt=0; nt<14; nt++)
+for(nt=0; nt<seq_num; nt++)
 {
  strcpy(g_motif[nt],motif_cp);
  for(k=0; k<num; k++)
@@ -175,7 +175,7 @@ for(nt=0; nt<14; nt++)
   }
   if(motif_cp[k]=='C')
   {
-    hit[nt]=hit[nt]+s_i[0][k];
+    hit[nt]=hit[nt]+s_i[1][k];
   }
   if(motif_cp[k]=='G')
   {
@@ -187,6 +187,7 @@ for(nt=0; nt<14; nt++)
   }
  }
 }
-
+//出力
+printf("%5.2lf",hit[0]);
   return 0;
 }
