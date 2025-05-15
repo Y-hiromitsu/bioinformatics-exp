@@ -146,21 +146,6 @@ for(k=0; k<N; k++)
   }
 }
 //出力
-printf("%lf\n",bg_total);
-printf("%lf\n",seq_num_pse);
-for(k=0; k<N; k++)
-{
- printf("%5.2lf ",q[k]);
-}
-printf("\n");
-for(k=0; k<N; k++)
-{
- for(l=0; l<num; l++)
- {
-  printf("%5.2lf ",p_i[k][l]);
- }
- printf("\n");
-}
 for(k=0; k<N; k++)
 {
   for(l=0; l<num; l++)
@@ -172,10 +157,11 @@ for(k=0; k<N; k++)
 
 //結合部位の探索
 int nt;
-char 
+char motif_cp[num];
 for(nt=0; nt<14; nt++)
 {
-
+ strcpy(g_motif[nt],motif_cp);
+ 
 }
 
   return 0;
