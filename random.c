@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 //#define RANDMAX 24314410
 #define BUFSIZE 1024 //ファイルから読み込む一行の最大文字数
@@ -83,11 +84,35 @@ int main(int argc, char* argv[]){
     printf("%s\n", g_pro[i].seq);
  }
  int gene_length=strlen(g_pro[0].seq);
-  printf("%d\n",gene_length);
-int x;
-for(x=0; x<3; x++)
-{
-  printf("%d\n",rand()%24314410+1);
-}
+  //printf("%d\n",gene_length);
+  int r, count;
+  char array[gene_length];
+  for(count=0; count<3; count++)
+  {
+    for(int i=0;i<gene_length;i++)
+  {
+    r =rand()%24314410+1;
+    if(r<=7519429){
+         array[i]= 'A';
+    }
+    if(7519429<r && r<=7519429+4637676){
+        array[i]= 'C';
+    }
+     if(751942+4637676<r && r<=7519429+4637676*2){
+        array[i]= 'G';
+    }
+     if(751942+4637676*2<r && r<=7519429*2+4637676*2){
+        array[i]= 'T';
+    }
+  }
+   FILE *fp;
+   fp=fopen("array.data","a");
+   for(int i=0;i<gene_length;i++)
+   {
+       fprintf(fp,"%c",array[i]);
+  }
+   fprintf(fp,"\n");
+   fclose(fp);
+  }
 }
 
