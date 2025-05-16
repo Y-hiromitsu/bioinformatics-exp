@@ -10,6 +10,7 @@
 
 
 char g_motif[MAX_SEQ_NUM][BUFSIZE]; //転写因子の結合部位配列を保存する配列
+char motif_name[BUFSIZE];
 
 struct promoter{
   char name[BUFSIZE];
@@ -83,7 +84,7 @@ int main(int argc, char* argv[]){
   }
 
  //頻度表の作成 
-int k, l;
+int k, l, m, p, s, t;
 //配列の長さを取得
 int num=strlen(g_motif[0]);
 int freq[N][num];
@@ -193,5 +194,69 @@ for(k=0; k<seq_num; k++)
 {
   printf("%5.2lf",hit[k]);
 }
+printf("\n");
+//ゲノム配列上の結合部位の探索
+int num_pro=strlen(g_pro[0].seq);
+printf("%d\n",num_pro);
+double hit_gene[gene_num][BUFSIZE];
+double Hit_gene[gene_num];
+for(k=0; k<gene_num; k++)
+{
+  for(l=0; l<BUFSIZE; l++)
+  {
+    hit_gene[k][l]=0;
+  }
+}
+//プロモーター配列上のヒット
+for (k=0; k<gene_num; k++)
+{
+  printf("gene:%s\n",g_pro[k].name);
+  int start;
+  for(start=0; start<num_pro-num; start++)
+  {
+   for(l=0; l<num; l++)
+   {
+    if(g_pro[k].seq[start+l]=='A')
+    {
+      hit_gene[k][start]=hit_gene[k][start]+s_i[0][l];
+    }
+    else if(g_pro[k].seq[start+l]=='C')
+    {
+      hit_gene[k][start]=hit_gene[k][start]+s_i[1][l];
+    }
+    else if(g_pro[k].seq[start+l]=='G')
+    {
+      hit_gene[k][start]=hit_gene[k][start]+s_i[2][l];
+    }
+    else if(g_pro[k].seq[start+l]=='T')
+    {
+      hit_gene[k][start]=hit_gene[k][start]+s_i[3][l];
+    } 
+  }
+  //printf("%8.2lf",hit_gene[k][start]);
+  int p, x;
+  double thres=6.0;
+  if(hit_gene[k][start]>=6.0)
+  {
+    printf("position:%d\n",start+1);
+    printf("hit(");
+    for(x=0; x<num; x++)
+    {
+      printf("%c",g_pro[k].seq[start+x]);
+    }
+    printf(")=%.2lf\n", hit_gene[k][start]);
+  }
+  //printf("position:%d\n",pos);
+  //printf("hit(%s)=%5.2lf\n",g_motif[k], Hit_gene[k]); 
+  //printf("\n");
+ }
+ printf("\n");
+}
+
+
+//結果の出力
   return 0;
 }
+
+//頻度表の作成
+//void matrix_freq(int matrix[][num], int N)
