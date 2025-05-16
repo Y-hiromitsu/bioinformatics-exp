@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 
+#define RANDMAX 24314410
 #define BUFSIZE 1024 //ファイルから読み込む一行の最大文字数
 #define MAX_SEQ_NUM 30 //一つの転写因子に対して与えられる結合部位配列の最大数
 #define MAX_GENE_NUM 8 /*与えられるプロモータ領域の最大遺伝子数*/
@@ -196,7 +197,7 @@ for(k=0; k<seq_num; k++)
 }
 printf("\n");
 //ゲノム配列上の結合部位の探索
-int num_pro=strlen(g_pro[0].seq);
+int num_pro=strlen(g_pro[0].seq); //プロモーター配列の長さを取得
 printf("%d\n",num_pro);
 double hit_gene[gene_num][BUFSIZE];
 double Hit_gene[gene_num];
@@ -251,6 +252,9 @@ for (k=0; k<gene_num; k++)
   //printf("\n");
  }
  printf("\n");
+
+ //ランダム配列の作成
+
 }
 
 
