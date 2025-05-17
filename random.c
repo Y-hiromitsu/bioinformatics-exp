@@ -87,21 +87,22 @@ int main(int argc, char* argv[]){
   //printf("%d\n",gene_length);
   int r, count;
   char array[gene_length];
+  srand((unsigned int)time(NULL));
   for(count=0; count<3; count++)
   {
     for(int i=0;i<gene_length;i++)
   {
-    r =rand()%24314410+1;
-    if(r<=7519429){
+    r =rand()%100;
+    if(r<31){
          array[i]= 'A';
     }
-    if(7519429<r && r<=7519429+4637676){
+    else if(r<31+19){
         array[i]= 'C';
     }
-     if(751942+4637676<r && r<=7519429+4637676*2){
+    else if(r<31+19*2){
         array[i]= 'G';
     }
-     if(751942+4637676*2<r && r<=7519429*2+4637676*2){
+    else if(r<100){
         array[i]= 'T';
     }
   }
