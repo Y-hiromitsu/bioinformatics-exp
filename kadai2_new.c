@@ -67,6 +67,11 @@ int read_promoter(char *filename){
   return gene_num;
 }
 
+void freqtable(int num, char g_motif[][], int seq_num, int freq[][num]);
+void oddsscorematrix(int num, int freq[][num], double s_i[][num], double p_i[num], int seq_num);
+void caluculatehits(int num, char **g_motif, double s_i[][num], double hit[], int seq_num);
+//void searchbindingsites(int num, int num_pro, Promoter *g_pro, int gene_num, double s_i[][num], double threshold);
+
 int main(int argc, char* argv[]){
   int seq_num = read_multi_seq(argv[1]); //１番目の引数で指定した転写因子の複数の結合部位配列を読み込む
 
@@ -84,118 +89,25 @@ int main(int argc, char* argv[]){
     printf("%s\n", g_pro[i].seq);
   }
 
- //頻度表の作成 
-int k, l, m, p, s, t;
 //配列の長さを取得
 int num=strlen(g_motif[0]);
+
+ //頻度表の作成 
+int k, l, m, p, s, t;
 int freq[N][num];
-//表の初期化
-for(k=0; k<N; k++)
-{
-  for(l=0; l<num; l++)
-  {
-    freq[k][l]=0;
-  }
-}
-//頻度を数える
-for(k=0; k<seq_num; k++)
-{
-  for(l=0; l<num; l++)
-  {
-    if(g_motif[k][l]=='A')
-    {
-      freq[0][l]++;
-    }
-    if(g_motif[k][l]=='C')
-    {
-      freq[1][l]++;
-    }
-    if(g_motif[k][l]=='G')
-    {
-      freq[2][l]++;
-    }
-    if(g_motif[k][l]=='T')
-    {
-      freq[3][l]++;
-    }
-  }
-}
-//試しに出力
-printf("%d\n",num);
-for(k=0; k<N; k++)
-{
-  for(l=0; l<num; l++)
-  {
-    printf("%3d ",freq[k][l]);
-  }
-  printf("\n");
-}
+printf("frequency table\n");
+freqtable(num, g_motif, seq_num, freq);
+
 
 
 //対数オッズスコア行列の作成
 double s_i[N][num], p_i[N][num];
-//バックグラウンドにおける頻度の計算
-double bg_total=7519429*2+4637676*2;
-double bg[N]={7519429, 4637676, 4637676, 7519429};
-double q[N]={bg[0]/bg_total, bg[1]/bg_total, bg[2]/bg_total, bg[3]/bg_total};
-double seq_num_pse=seq_num+N;
-for(k=0; k<N; k++)
-{
-  for(l=0; l<num; l++)
-  {
-    p_i[k][l]=(freq[k][l]+1)/(seq_num_pse);
-    s_i[k][l]=log(p_i[k][l]/q[k]);
-  }
-}
-//出力
-for(k=0; k<N; k++)
-{
-  for(l=0; l<num; l++)
-  {
-    printf("%5.2lf ",s_i[k][l]);
-  }
-  printf("\n");
-}
+oddsscorematrix(num, freq, s_i, p_i, seq_num);
 
-//結合部位の探索
-int nt;
-char motif_cp[num];
+//ヒットを求める
 double hit[seq_num];
-//配列の初期化
-for(k=0; k<seq_num; k++)
-{
-  hit[k]=0;
-}
-for(nt=0; nt<seq_num; nt++)
-{
- strcpy(motif_cp,g_motif[nt]);
- printf("%s\n",motif_cp);
- for(k=0; k<num; k++)
- {
-  if(motif_cp[k]=='A')
-  {
-    hit[nt]=hit[nt]+s_i[0][k];
-  }
-  if(motif_cp[k]=='C')
-  {
-    hit[nt]=hit[nt]+s_i[1][k];
-  }
-  if(motif_cp[k]=='G')
-  {
-    hit[nt]=hit[nt]+s_i[2][k];
-  }
-  if(motif_cp[k]=='T')
-  {
-    hit[nt]=hit[nt]+s_i[3][k];
-  }
- }
-}
-//出力
-for(k=0; k<seq_num; k++)
-{
-  printf("%5.2lf",hit[k]);
-}
-printf("\n");
+caluculatehits(num, g_motif, s_i, hit, seq_num);
+
 //ゲノム配列上の結合部位の探索
 int num_pro=strlen(g_pro[0].seq); //プロモーター配列の長さを取得
 printf("%d\n",num_pro);
@@ -251,4 +163,113 @@ for (k=0; k<gene_num; k++)
  printf("\n");
 }
   return 0;
+}
+
+//頻度表を作成する関数
+void freqtable(int num, char **g_motif, int seq_num, int freq[][num])
+{
+    int k, l;
+    for(k=0; k<seq_num; k++)
+    {
+        for(l=0; l<num; l++)
+        {
+            freq[k][l]=0;
+        }
+    }
+    for(k=0; k<seq_num; k++)
+    {
+        for(l=0; l<num; l++)
+        {
+            if(g_motif[k][l]=='A')
+            {
+                freq[0][l]++;
+            }
+            if(g_motif[k][l]=='C')
+            {
+                freq[1][l]++;
+            }
+            if(g_motif[k][l]=='G')
+            {
+                freq[2][l]++;
+            }
+            if(g_motif[k][l]=='T')
+            {
+                freq[3][l]++;
+            }
+        }
+    }
+    //出力
+    for(k=0; k<seq_num; k++)
+    {
+        for(l=0; l<num; l++)
+        {
+            printf("%5d ",freq[k][l]);
+        }
+        printf("\n");
+    }
+}
+
+//対数オッズスコア行列を作成する関数
+void oddsscorematrix(int num, int freq[][num], double s_i[][num], double p_i[num], int seq_num)
+{
+    int k, l;
+    double bg_total=7519429*2+4637676*2;
+    double bg[N]={7519429, 4637676, 4637676, 7519429};
+    double q[N]={bg[0]/bg_total, bg[1]/bg_total, bg[2]/bg_total, bg[3]/bg_total};
+    double seq_num_pse=seq_num+N;
+    for(k=0; k<N; k++)
+    {
+        for(l=0; l<num; l++)
+        {
+            p_i[k][l]=(freq[k][l]+1)/(seq_num_pse);
+            s_i[k][l]=log(p_i[k][l]/q[k]);
+        }
+    }
+    //出力
+    for(k=0; k<N; k++)
+    {
+        for(l=0; l<num; l++)
+        {
+            printf("%5.2lf ",s_i[k][l]);
+        }
+        printf("\n");
+    }
+}
+
+//各配列のヒットを求める関数
+void caluculatehits(int num, char **g_motif, double s_i[][num], double hit[], int seq_num)
+{
+    int k, l;
+    for(k=0; k<seq_num; k++)
+    {
+        hit[k]=0;
+    }
+    for(k=0; k<seq_num; k++)
+    {
+        for(l=0; l<num; l++)
+        {
+            if(g_motif[k][l]=='A')
+            {
+                hit[k]=hit[k]+s_i[0][l];
+            }
+            if(g_motif[k][l]=='C')
+            {
+                hit[k]=hit[k]+s_i[1][l];
+            }
+            if(g_motif[k][l]=='G')
+            {
+                hit[k]=hit[k]+s_i[2][l];
+            }
+            if(g_motif[k][l]=='T')
+            {
+                hit[k]=hit[k]+s_i[3][l];
+            }
+        }
+        //出力
+        for(k=0; k<seq_num; k++)
+        {
+            printf("%5.2lf ",hit[k])
+        }
+        printf("\n");
+    }
 }
