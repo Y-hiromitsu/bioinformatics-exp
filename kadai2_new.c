@@ -67,9 +67,9 @@ int read_promoter(char *filename){
   return gene_num;
 }
 
-void freqtable(int num, char g_motif[][], int seq_num, int freq[][num]);
-void oddsscorematrix(int num, int freq[][num], double s_i[][num], double p_i[num], int seq_num);
-void caluculatehits(int num, char **g_motif, double s_i[][num], double hit[], int seq_num);
+void freqtable(int num, int seq_num, int freq[][num]);
+void oddsscorematrix(int num, int freq[][num], double s_i[][num], double p_i[][num], int seq_num);
+void caluculatehits(int num, double s_i[][num], double hit[], int seq_num);
 //void searchbindingsites(int num, int num_pro, Promoter *g_pro, int gene_num, double s_i[][num], double threshold);
 
 int main(int argc, char* argv[]){
@@ -96,7 +96,7 @@ int num=strlen(g_motif[0]);
 int k, l, m, p, s, t;
 int freq[N][num];
 printf("frequency table\n");
-freqtable(num, g_motif, seq_num, freq);
+freqtable(num, seq_num, freq);
 
 
 
@@ -106,7 +106,7 @@ oddsscorematrix(num, freq, s_i, p_i, seq_num);
 
 //ヒットを求める
 double hit[seq_num];
-caluculatehits(num, g_motif, s_i, hit, seq_num);
+caluculatehits(num, s_i, hit, seq_num);
 
 //ゲノム配列上の結合部位の探索
 int num_pro=strlen(g_pro[0].seq); //プロモーター配列の長さを取得
@@ -166,7 +166,7 @@ for (k=0; k<gene_num; k++)
 }
 
 //頻度表を作成する関数
-void freqtable(int num, char **g_motif, int seq_num, int freq[][num])
+void freqtable(int num, int seq_num, int freq[][num])
 {
     int k, l;
     for(k=0; k<seq_num; k++)
@@ -199,7 +199,7 @@ void freqtable(int num, char **g_motif, int seq_num, int freq[][num])
         }
     }
     //出力
-    for(k=0; k<seq_num; k++)
+    for(k=0; k<N; k++)
     {
         for(l=0; l<num; l++)
         {
@@ -210,7 +210,7 @@ void freqtable(int num, char **g_motif, int seq_num, int freq[][num])
 }
 
 //対数オッズスコア行列を作成する関数
-void oddsscorematrix(int num, int freq[][num], double s_i[][num], double p_i[num], int seq_num)
+void oddsscorematrix(int num, int freq[][num], double s_i[][num], double p_i[][num], int seq_num)
 {
     int k, l;
     double bg_total=7519429*2+4637676*2;
@@ -237,7 +237,7 @@ void oddsscorematrix(int num, int freq[][num], double s_i[][num], double p_i[num
 }
 
 //各配列のヒットを求める関数
-void caluculatehits(int num, char **g_motif, double s_i[][num], double hit[], int seq_num)
+void caluculatehits(int num, double s_i[][num], double hit[], int seq_num)
 {
     int k, l;
     for(k=0; k<seq_num; k++)
@@ -268,7 +268,7 @@ void caluculatehits(int num, char **g_motif, double s_i[][num], double hit[], in
         //出力
         for(k=0; k<seq_num; k++)
         {
-            printf("%5.2lf ",hit[k])
+            printf("%5.2lf ",hit[k]);
         }
         printf("\n");
     }
