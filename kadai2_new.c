@@ -67,11 +67,10 @@ int read_promoter(char *filename){
   return gene_num;
 }
 
-void freqtable(int num, int seq_num, int freq[][num]);//頻度表の作成
-void oddsscorematrix(int num, int freq[][num], double s_i[][num], int seq_num);//対数オッズスコア行列を作る
-void PrintOddsscorematrix(int num, double s_i[][num]);//対数オッズスコア行列の出力
-//void searchbindingsites(int num, int num_pro, int gene_num, double s_i[][num], double threshold);//結合部位の探索
-//void PrintBindingsites(int num, int)
+void freqtable(int num, int seq_num, int freq[][BUFSIZE]);//頻度表の作成
+void oddsscorematrix(int num, int freq[][BUFSIZE], double s_i[][BUFSIZE], int seq_num);//対数オッズスコア行列を作る
+void PrintOddsscorematrix(int num, double s_i[][BUFSIZE]);//対数オッズスコア行列の出力
+void searchbindingsites(int num, int num_pro, int gene_num, double s_i[][BUFSIZE], double threshold);//結合部位の探索
 
 int main(int argc, char* argv[]){
   int seq_num = read_multi_seq(argv[1]); //１番目の引数で指定した転写因子の複数の結合部位配列を読み込む
@@ -95,75 +94,26 @@ int num=strlen(g_motif[0]);
 
  //頻度表の作成 
 int k, l, m, p, s, t;
-int freq[N][num];
+int freq[N][BUFSIZE];
 printf("frequency table\n");
 freqtable(num, seq_num, freq);
 
 
 
 //対数オッズスコア行列の作成
-double s_i[N][num];
+double s_i[N][BUFSIZE];
 oddsscorematrix(num, freq, s_i, seq_num);
 PrintOddsscorematrix(num, s_i);
 
 //ゲノム配列上の結合部位の探索
 int num_pro=strlen(g_pro[0].seq); //プロモーター配列の長さを取得
-double hit_gene[gene_num][BUFSIZE];
-double Hit_gene[gene_num];
-for(k=0; k<gene_num; k++)
-{
-  for(l=0; l<BUFSIZE; l++)
-  {
-    hit_gene[k][l]=0;
-  }
-}
-//プロモーター配列上のヒット
-for (k=0; k<gene_num; k++)
-{
-  printf("gene:%s\n",g_pro[k].name);
-  int start;
-  for(start=0; start<num_pro-num; start++)
-  {
-   for(l=0; l<num; l++)
-   {
-    if(g_pro[k].seq[start+l]=='A')
-    {
-      hit_gene[k][start]=hit_gene[k][start]+s_i[0][l];
-    }
-    else if(g_pro[k].seq[start+l]=='C')
-    {
-      hit_gene[k][start]=hit_gene[k][start]+s_i[1][l];
-    }
-    else if(g_pro[k].seq[start+l]=='G')
-    {
-      hit_gene[k][start]=hit_gene[k][start]+s_i[2][l];
-    }
-    else if(g_pro[k].seq[start+l]=='T')
-    {
-      hit_gene[k][start]=hit_gene[k][start]+s_i[3][l];
-    } 
-  }
-  //printf("%8.2lf",hit_gene[k][start]);
-  int p, x;
-  double thres=6.0;
-  if(hit_gene[k][start]>=6.0)
-  {
-    printf("position:%d\n",start+1);
-    printf("hit(");
-    for(x=0; x<num; x++)
-    {
-      printf("%c",g_pro[k].seq[start+x]);
-    }
-    printf(")=%.2lf\n", hit_gene[k][start]);
-  }
- }
- printf("\n");
-}
+double threshold=5.0;
+searchbindingsites(num, num_pro, gene_num, s_i, threshold);
   return 0;
 }
 
 //頻度表を作成する関数
-void freqtable(int num, int seq_num, int freq[][num])
+void freqtable(int num, int seq_num, int freq[][BUFSIZE])
 {
     int k, l;
     for(k=0; k<seq_num; k++)
@@ -207,9 +157,9 @@ void freqtable(int num, int seq_num, int freq[][num])
 }
 
 //対数オッズスコア行列を作成する関数
-void oddsscorematrix(int num, int freq[][num], double s_i[][num], int seq_num)
+void oddsscorematrix(int num, int freq[][BUFSIZE], double s_i[][BUFSIZE], int seq_num)
 {
-    double p_i[N][num];
+    double p_i[N][BUFSIZE];
     int k, l;
     double bg_total=7519429*2+4637676*2;
     double bg[N]={7519429, 4637676, 4637676, 7519429};
@@ -226,7 +176,7 @@ void oddsscorematrix(int num, int freq[][num], double s_i[][num], int seq_num)
 }
 
 //対数オッズスコア行列を出力する関数
-void PrintOddsscorematrix(int num, double s_i[][num])
+void PrintOddsscorematrix(int num, double s_i[][BUFSIZE])
 {
   int k, l;
     for(k=0; k<N; k++)
@@ -239,3 +189,55 @@ void PrintOddsscorematrix(int num, double s_i[][num])
     }
 }
 
+//結合部位を探索する関数
+void searchbindingsites(int num, int num_pro, int gene_num, double s_i[][BUFSIZE], double threshold)
+{
+    int k, l, x;
+    double hit_gene[gene_num][BUFSIZE];
+    for(k=0; k<gene_num; k++)
+  {
+    for(l=0; l<BUFSIZE; l++)
+    {
+      hit_gene[k][l]=0;
+    }
+  }
+  //プロモーター配列上のヒット
+  for (k=0; k<gene_num; k++)
+  {
+    printf("gene:%s\n",g_pro[k].name);
+    int start;
+    for(start=0; start<num_pro-num; start++)
+    {
+      for(l=0; l<num; l++)
+      {
+        if(g_pro[k].seq[start+l]=='A')
+        {
+          hit_gene[k][start]=hit_gene[k][start]+s_i[0][l];
+        }
+        else if(g_pro[k].seq[start+l]=='C')
+        {
+          hit_gene[k][start]=hit_gene[k][start]+s_i[1][l];
+        }
+        else if(g_pro[k].seq[start+l]=='G')
+        {
+          hit_gene[k][start]=hit_gene[k][start]+s_i[2][l];
+        }
+        else if(g_pro[k].seq[start+l]=='T')
+        {
+          hit_gene[k][start]=hit_gene[k][start]+s_i[3][l];
+        } 
+      } 
+    }
+    if(hit_gene[k][start]>=threshold)
+    {
+      printf("position:%d\n",start+1);
+      printf("hit(");
+      for(x=0; x<num; x++)
+      {
+        printf("%c",g_pro[k].seq[start+x]);
+      }
+      printf(")=%.2lf\n", hit_gene[k][start]);
+    }
+    printf("\n");
+  }
+}
