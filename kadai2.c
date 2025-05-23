@@ -196,6 +196,7 @@ for(k=0; k<seq_num; k++)
   printf("%5.2lf",hit[k]);
 }
 printf("\n");
+
 //ゲノム配列上の結合部位の探索
 int num_pro=strlen(g_pro[0].seq); //プロモーター配列の長さを取得
 printf("%d\n",num_pro);
