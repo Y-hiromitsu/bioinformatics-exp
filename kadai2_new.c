@@ -70,8 +70,6 @@ int read_promoter(char *filename){
 
 void freqtable(int num, int seq_num, int freq[][BUFSIZE]);//頻度表の作成
 void oddsscorematrix(int num, int freq[][BUFSIZE], double s_i[][BUFSIZE], int seq_num);//対数オッズスコア行列を作る
-void PrintOddsscorematrix(int num, double s_i[][BUFSIZE]);//対数オッズスコア行列の出力
-//void searchbindingsites(int num, int num_pro, int gene_num, double s_i[][BUFSIZE], double threshold);//結合部位の探索
 
 int main(int argc, char* argv[]){
   int seq_num = read_multi_seq(argv[1]); //１番目の引数で指定した転写因子の複数の結合部位配列を読み込む
@@ -103,7 +101,6 @@ freqtable(num, seq_num, freq);
 //対数オッズスコア行列の作成
 double s_i[MAX_SEQ_NUM][BUFSIZE];
 oddsscorematrix(num, freq, s_i, seq_num);
-PrintOddsscorematrix(num, s_i);
 
 //ゲノム配列上の結合部位の探索
 int num_pro=strlen(g_pro[0].seq); //プロモーター配列の長さを取得
@@ -224,13 +221,7 @@ void oddsscorematrix(int num, int freq[][BUFSIZE], double s_i[][BUFSIZE], int se
             s_i[k][l]=log(p_i[k][l]/q[k]);
         }
     }
-}
-
-//対数オッズスコア行列を出力する関数
-void PrintOddsscorematrix(int num, double s_i[][BUFSIZE])
-{
-  int k, l;
-    for(k=0; k<N; k++)
+      for(k=0; k<N; k++)
     {
         for(l=0; l<num; l++)
         {
@@ -239,4 +230,6 @@ void PrintOddsscorematrix(int num, double s_i[][BUFSIZE])
         printf("\n");
     }
 }
+
+
 
