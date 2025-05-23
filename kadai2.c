@@ -23,7 +23,7 @@ struct promoter{
 int read_multi_seq(char* filename){
   int seq_num = 0;
   char buffer[BUFSIZE];
-  FILE *fp = fopen("MATa1","r");
+  FILE *fp = fopen(filename,"r");
 
   if(fp == NULL){
     printf("motif_region_file open error.\n");
@@ -44,7 +44,7 @@ int read_multi_seq(char* filename){
 int read_promoter(char *filename){
   int gene_num = 0;  
   char buffer[BUFSIZE];
-  FILE *fp = fopen("promoters","r");
+  FILE *fp = fopen(filename,"r");
 
   if(fp == NULL){
     printf("scorefile open error.\n");
