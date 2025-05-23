@@ -109,6 +109,7 @@ PrintOddsscorematrix(num, s_i);
 int num_pro=strlen(g_pro[0].seq); //プロモーター配列の長さを取得
 double threshold=5.0;
 searchbindingsites(num, num_pro, gene_num, s_i, threshold);
+
   return 0;
 }
 
@@ -226,9 +227,8 @@ void searchbindingsites(int num, int num_pro, int gene_num, double s_i[][BUFSIZE
         {
           hit_gene[k][start]=hit_gene[k][start]+s_i[3][l];
         } 
-      } 
-    }
-    if(hit_gene[k][start]>=threshold)
+      }
+      if(hit_gene[k][start]>=threshold)
     {
       printf("position:%d\n",start+1);
       printf("hit(");
@@ -237,7 +237,8 @@ void searchbindingsites(int num, int num_pro, int gene_num, double s_i[][BUFSIZE
         printf("%c",g_pro[k].seq[start+x]);
       }
       printf(")=%.2lf\n", hit_gene[k][start]);
+      printf("\n");
     }
-    printf("\n");
+    }
   }
 }
