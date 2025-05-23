@@ -232,9 +232,9 @@ void searchbindingsites(int num, int num_pro, int gene_num, double s_i[][BUFSIZE
     {
       printf("position:%d\n",start+1);
       printf("hit(");
-      for(x=0; x<num; x++)
+      for(x=start; x<start+num; x++)
       {
-        printf("%c",g_pro[k].seq[start+x]);
+        printf("%c",g_pro[k].seq[x]);
       }
       printf(")=%.2lf\n", hit_gene[k][start]);
       printf("\n");
