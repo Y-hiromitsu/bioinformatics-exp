@@ -7,7 +7,7 @@
 #define BUFSIZE 1024 //ファイルから読み込む一行の最大文字数
 #define MAX_SEQ_NUM 30 //一つの転写因子に対して与えられる結合部位配列の最大数
 #define MAX_GENE_NUM 8 /*与えられるプロモータ領域の最大遺伝子数*/
-#define N 4
+#define N 4 //塩基の種類の数
 
 
 char g_motif[MAX_SEQ_NUM][BUFSIZE]; //転写因子の結合部位配列を保存する配列
@@ -74,28 +74,16 @@ void oddsscorematrix(int num, int freq[][BUFSIZE], double s_i[][BUFSIZE], int se
 int main(int argc, char* argv[]){
   int seq_num = read_multi_seq(argv[1]); //１番目の引数で指定した転写因子の複数の結合部位配列を読み込む
 
-  printf("motif region:\n");
-  for(int i = 0; i < seq_num; i++){
-    printf("%s\n",g_motif[i]); //読み込んだ転写因子の結合部位配列を表示
-  }
-  printf("\n");
-
   int gene_num = read_promoter(argv[2]);  //２番目の引数で指定した遺伝子のプロモータ領域を読み込む
   
-  printf("promoter_sequence:\n");
-  for(int i = 0; i < gene_num; i++){
-    printf(">%s\n", g_pro[i].name); //読み込んだプロモータ領域を表示
-    printf("%s\n", g_pro[i].seq);
-  }
 
 //配列の長さを取得
 int num=strlen(g_motif[0]);
  //頻度表の作成 
 int k, l;
 int freq[MAX_SEQ_NUM][BUFSIZE];
-printf("frequency table\n");
+//printf("frequency table\n");
 freqtable(num, seq_num, freq);
-
 
 
 //対数オッズスコア行列の作成
@@ -194,14 +182,14 @@ void freqtable(int num, int seq_num, int freq[][BUFSIZE])
         }
     }
     //出力
-    for(k=0; k<N; k++)
+    /*for(k=0; k<N; k++)
     {
         for(l=0; l<num; l++)
         {
             printf("%5d ",freq[k][l]);
         }
         printf("\n");
-    }
+    }*/
 }
 
 //対数オッズスコア行列を作成する関数
@@ -221,14 +209,14 @@ void oddsscorematrix(int num, int freq[][BUFSIZE], double s_i[][BUFSIZE], int se
             s_i[k][l]=log(p_i[k][l]/q[k]);
         }
     }
-      for(k=0; k<N; k++)
+  /*  for(k=0; k<N; k++)
     {
         for(l=0; l<num; l++)
         {
             printf("%5.2lf ",s_i[k][l]);
         }
         printf("\n");
-    }
+    }*/
 }
 
 
