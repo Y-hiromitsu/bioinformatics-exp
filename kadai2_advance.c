@@ -129,7 +129,7 @@ for (k=0; k<gene_num; k++)
       hit_gene[k][start]+=s_i[3][l];
     }
    }
-   printf("%5.2lf ",hit_gene[k][start]);
+   printf("%8.2lf ",hit_gene[k][start]);
  }
  printf("\n");
 }
