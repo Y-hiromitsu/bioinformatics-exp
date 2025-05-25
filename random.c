@@ -70,25 +70,13 @@ int read_promoter(char *filename){
 int main(int argc, char* argv[]){
   int seq_num = read_multi_seq(argv[1]); //１番目の引数で指定した転写因子の複数の結合部位配列を読み込む
 
-  printf("motif region:\n");
-  for(int i = 0; i < seq_num; i++){
-    printf("%s\n",g_motif[i]); //読み込んだ転写因子の結合部位配列を表示
-  }
-  printf("\n");
-
   int gene_num = read_promoter(argv[2]);  //２番目の引数で指定した遺伝子のプロモータ領域を読み込む
-  
-  printf("promoter_sequence:\n");
-  for(int i = 0; i < gene_num; i++){
-    printf(">%s\n", g_pro[i].name); //読み込んだプロモータ領域を表示
-    printf("%s\n", g_pro[i].seq);
- }
+
  int gene_length=strlen(g_pro[0].seq);
-  //printf("%d\n",gene_length);
   int r, count;
   char array[gene_length];
   srand((unsigned int)time(NULL));
-  for(count=0; count<3; count++)
+  for(count=0; count<5; count++)
   {
     for(int i=0;i<gene_length;i++)
   {
@@ -108,6 +96,7 @@ int main(int argc, char* argv[]){
   }
    FILE *fp;
    fp=fopen("array.data","a");
+   fprintf(fp,">%d\n",count);
    for(int i=0;i<gene_length;i++)
    {
        fprintf(fp,"%c",array[i]);
