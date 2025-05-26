@@ -92,7 +92,7 @@ oddsscorematrix(num, freq, s_i, seq_num);
 
 //ゲノム配列上の結合部位の探索
 int num_pro=strlen(g_pro[0].seq); //プロモーター配列の長さを取得
-double threshold=5.0;
+double threshold=5.0;//閾値の設定
 double hit_gene[MAX_GENE_NUM][BUFSIZE];
 //配列の初期化
 for(k=0; k<MAX_GENE_NUM; k++)
